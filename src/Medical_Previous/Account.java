@@ -10,21 +10,23 @@ package Medical_Previous;
  * @author herrerach_sd2022
  */
 public class Account {
-    private String role;
+    private String Role;
     private String Firstname;
     private String Lastname;
     private int Age;
     private String Username;
     private String Password;
 
-    public Account(String role, String Firstname, String Lastname, int Age, String Username, String Password) {
-        this.role = role;
+    public Account(String Role, String Firstname, String Lastname, int Age, String Username, String Password) {
+        this.Role = Role;
         this.Firstname = Firstname;
         this.Lastname = Lastname;
         this.Age = Age;
         this.Username = Username;
         this.Password = Password;
     }
+    
+    public Account(){}
 
 
     public String getFirstname() {
@@ -68,11 +70,13 @@ public class Account {
     }
 
     public String getRole() {
-        return role;
+        return Role;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setRole(String Role) {
+        this.Role = Role;
     }
+    
+    
       
 }

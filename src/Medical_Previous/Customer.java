@@ -5,55 +5,44 @@
  */
 package Medical_Previous;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
  *
  * @author 2ndyrGroupB
  */
-public class Customer extends Medicine implements method {
+public class Customer extends RegisteredUsers {
 
-    public static Scanner user = new Scanner(System.in);
-    Pharmacist pharmacist;
+    Scanner user = new Scanner(System.in);
 
-    public Customer(String GenericName, String BrandName, double Medprice, String illness) {
-        super(GenericName, BrandName, Medprice, illness);
+    public Customer(String role, String Firstname, String Lastname, int Age, String Username, String Password) {
+        super(role, Firstname, Lastname, Age, Username, Password);
     }
 
-    public String input(String label) {
-        System.out.print(label + ": ");
-        return user.next();
+    public Customer() {
     }
 
-    @Override
-    public int inputInt(String label) {
-        System.out.print(label + ": ");
-        return user.nextInt();
-    }
-
-    /**
-     *
-     * @param label
-     * @return
-     */
-    @Override
-    public String classifyRole(String label) {
-        System.out.print(label + ": ");
-        String role = user.next();
-        if (role.equalsIgnoreCase("Admin")) {
-            return "Admin";
-        } else if (role.equalsIgnoreCase("Customer")) {
-            return "Costumer";
+    public void order(HashMap<String, Integer> a) {
+        Pharmacist b = new Pharmacist();
+        System.out.println("-------------------------------------------------Order Now-----------------------------------------------------");
+        String order = input("Medicine's Name");
+        int orderNum = inputInt("Quantity");
+        if (a.containsKey(order)) {
+            a.replace(order, a.get(order) - orderNum);
+            System.out.println("You're order is ready!");
+            b.showPurchase(order);
         } else {
-            return "Invalid Input";
+            System.out.println("Can't find Medicine name");
         }
     }
 
     public void viewOrder() {
+        Pharmacist a = new Pharmacist();
         System.out.println("\n-----------------------------------------------------Your Order---------------------------------------------------------");
         System.out.printf("%30s %5s %20s %5s %20s %5s %15s %5s", "Medicine Name", "|", "Brand Name", "|", "Generic Name", "|", "Price", "\n");
-        for (int x = 0; x < pharmacist.getReceipt().size(); ++x) {
-            System.out.println(pharmacist.getReceipt().get(x));
+        for (int x = 0; x < a.getReceipt().size(); ++x) {
+            System.out.println(a.getReceipt().get(x));
         }
     }
 

@@ -29,8 +29,7 @@ public class Medical_Previous {
         tambalan.getTambal().add(new Medicine("Pleetal", "Cilostazol", 100, "Body Pain"));
         tambalan.getTambal().add(new Medicine("Tempra-Forte", "Paracetamol", 100, "Headache"));
         tambalan.getTambal().add(new Medicine("Paracetamol", "Tempra", 100, "Headache"));
-        tambalan.getTambal().add(new Medicine("Flixotide", "Fluticasone", 100, "Headache"));
-        
+        tambalan.getTambal().add(new Medicine("Flixotide", "Fluticasone", 100, "Headache"));       
         tambalan.processRegistered();
     }
 }
