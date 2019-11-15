@@ -6,7 +6,6 @@
 package Medical_Previous;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,13 +18,10 @@ public class Pharmacist extends RegisteredUsers {
     Scanner user = new Scanner(System.in);
     private ArrayList<Medicine> tambal = new ArrayList<Medicine>();
     private ArrayList<Medicine> receipt = new ArrayList<Medicine>();
-    private HashMap<String, Integer> Medquantity = new HashMap<String, Integer>();
+    private ArrayList<Medicine> Storage = new ArrayList<Medicine>();
     Customer customer = new Customer();
     Pharmacist b;
-
-    public Pharmacist(String role, String Firstname, String Lastname, int Age, String Username, String Password) {
-        super(role, Firstname, Lastname, Age, Username, Password);
-    }
+    Storage store;
 
     public Pharmacist() {
     }
@@ -46,28 +42,40 @@ public class Pharmacist extends RegisteredUsers {
         this.receipt = receipt;
     }
 
-    public HashMap<String, Integer> getMedquantity() {
-        return Medquantity;
+    public ArrayList<Medicine> getStorage() {
+        return Storage;
     }
 
-    public void setMedquantity(HashMap<String, Integer> Medquantity) {
-        this.Medquantity = Medquantity;
+    public void setStorage(ArrayList<Medicine> Storage) {
+        this.Storage = Storage;
+    }
+
+    public void MedStorage(Medicine med) {
+        tambal.add(med);
     }
 
     public void ViewInventory() {
-        for (int i = 0; i < tambal.size(); ++i) {
-            Medquantity.put(tambal.get(i).getGenericName(), 12);
-        }
         System.out.println("\n----------------------------------------------------INVENTORY-----------------------------------------------\n");
-        Medquantity.forEach((k, v) -> System.out.println("Medicine: " + k + "\twith Quantity:" + v + "\n"));
+        customer.getMedquantity().forEach((k, v) -> System.out.println("Medicine: " + k + " = " + "\twith Quantity:" + v + "\n"));
     }
 
     public void AddMed() {
-
+        String illness = (input("Medicine for: "));
+        if (illness.equalsIgnoreCase("Cough") || illness.equalsIgnoreCase("Allergies") || illness.equalsIgnoreCase("BodyPain") || illness.equalsIgnoreCase("Headache")) {
+            MedStorage(new Medicine(input("Generic Name: "), input("Brand Name: "), inputInt("price: "), illness));
+        } else {
+            System.out.println("\nNo Storage for that medicine\n");
+        }
     }
 
     public void RemoveMed() {
-
+        String del = (input("\nWhat medicine you want to delete: "));
+        for (int i = 0; i < tambal.size(); ++i) {
+            if (del.equals(tambal.get(i).getGenericName())) {
+                tambal.remove(tambal.indexOf(tambal.get(i)));
+                System.out.println("\nMedicine is successfully deleted\n");
+            }
+        }
     }
 
     public void showPurchase(String name) {
@@ -116,6 +124,9 @@ public class Pharmacist extends RegisteredUsers {
     }
 
     public void processRegistered() {
+        for (int i = 0; i < tambal.size(); ++i) {
+            customer.getMedquantity().put(tambal.get(i).getGenericName(), 12);
+        }
         boolean identity = true;
         Account currentUser = null;
         while (identity) {
@@ -123,14 +134,13 @@ public class Pharmacist extends RegisteredUsers {
             switch (choice) {
                 case "1":
                     System.out.println("\n---------------------------------------------REGISTER ACCOUNT---------------------------------------------\n");
-                    String role = input("\nRegister as a:(Admin/Customer)\nChoice");
+                    String role = input("\nRegister as a:(Customer)Choice");
                     String firstName = input("FirstName");
                     String lastName = input("LastName");
                     int Age = inputInt("Age");
                     String Username = input("UserName");
                     String Password = input("Password");
                     getRegistered().add(new Account(role, firstName, lastName, Age, Username, Password));
-                    break;
                 case "2":
                     System.out.println("\n----------------------------------------------LOGIN ACCOUNT------------------------------------------------------");
                     String LoginuserName = input("Username");
@@ -145,7 +155,7 @@ public class Pharmacist extends RegisteredUsers {
                                 currentUser = acc;
                                 String choose = "0";
                                 while (choose != "4") {
-                                    choose = input("\nWhat do you want to do?\nPress 1 View medicine\nPress 2 Order Medicine\nPress 3 to View Order\nPress 4 Exit\nChoice");
+                                    choose = input("\nWhat do you want to do?\nPress 1 View medicine\nPress 2 Order Medicine\nPress 3 View Order\nPress 4 Exit\nChoice");
 
                                     if (currentUser.getAge() >= 18) {
                                         System.out.println("-----------------------------Welcome and Enjoy Shopping" + " " + currentUser.getFirstname() + "--------------------------\n");
@@ -161,11 +171,84 @@ public class Pharmacist extends RegisteredUsers {
                                         System.out.println("\n*********************** MEDICINE FOR HEADACHE *****************************\n");
                                         showMed(this.tambal, "Headache");
                                         System.out.println("********************YOU ARE NOT ALLOWED TO PURCHASE ANYTHING********************\n");
-                                        System.out.println("**********************************Thank You***********************************");
-                                        break;
                                     }
                                     switch (choose) {
                                         case "1":
+                                            if (currentUser.getAge() >= 18) {
+                                                System.out.println("\n---------------------------LIST OF MEDICINES------------------------------\n");
+                                                System.out.println("\n************************** MEDICINE FOR COUGH *****************************\n");
+                                                showMed(this.tambal, "Cough");
+                                                System.out.println("\n*********************** MEDICINE FOR ALLERGIES *****************************\n");
+                                                showMed(this.tambal, "Allergies");
+                                                System.out.println("\n********************** MEDICINE FOR BODY PAIN ******************************\n");
+                                                showMed(this.tambal, "Body Pain");
+                                                System.out.println("\n*********************** MEDICINE FOR HEADACHE *****************************\n");
+                                                showMed(this.tambal, "Headache");
+                                            } else {
+                                                System.out.println("You are not authorized beyond this line");
+                                            }
+                                            break;
+                                        case "2":
+                                            if (currentUser.getAge() >= 18) {
+                                                String order = input("Medicine's Name");
+                                                int orderNum = inputInt("Quantity");
+                                                if (customer.getMedquantity().containsKey(order)) {
+                                                    customer.getMedquantity().replace(order, customer.getMedquantity().get(order) - orderNum);
+                                                    System.out.println("You're order is ready!");
+                                                    showPurchase(order);
+                                                } else {
+                                                    System.out.println("Medicine is not available");
+                                                }
+                                            } else {
+                                                System.out.println("You are not authorized beyond this line");
+                                            }
+                                            break;
+                                        case "3":
+                                            if (currentUser.getAge() >= 18) {
+                                                System.out.println("\n-----------------------------------------------------Your Order---------------------------------------------------------");
+                                                // System.out.printf("%30s %5s %20s %5s %20s %5s %15s %5s", "Medicine Name", "|", "Brand Name", "|", "Generic Name", "|", "Price", "\n");
+                                                for (int x = 0; x < receipt.size(); ++x) {
+                                                    System.out.println(receipt.get(x));
+                                                }
+                                            } else {
+                                                System.out.println("You are not authorized beyond this line");
+                                            }
+                                            break;
+                                        case "4":
+                                            choose = "4";
+                                            if (currentUser.getAge() >= 18) {
+                                                if (acc.getAge() >= 60) {
+                                                    printdiscount();
+                                                } else {
+                                                    printReceipt();
+                                                }
+                                            }else {
+                                                System.out.println("You are not authorized beyond this line");
+                                            }
+                                            break;
+                                        default:
+                                            System.out.println("Invalid");
+                                            break;
+                                    }
+                                }
+                                break;
+                            } else if (acc.getRole().equalsIgnoreCase("Admin")) {
+                                String Adminchoose = "0";
+                                while (Adminchoose != "5") {
+                                    Adminchoose = input("\nWhat do you want to do?\nPress 1 View Inventory\nPress 2 Add Medicine\nPress 3 Delete Medicine\nPress 4 VIew Medicine\nPress 5 Exit\nChoice");
+                                    switch (Adminchoose) {
+                                        case "1":
+                                            ViewInventory();
+                                            break;
+                                        case "2":
+                                            System.out.println("\n-------------------------------------ADD MEDICINE-------------------------------------------------\n");
+                                            AddMed();
+                                            break;
+                                        case "3":
+                                            System.out.println("\n-------------------------------------DELETE MEDICINE-------------------------------------------------\n");
+                                            RemoveMed();
+                                            break;
+                                        case "4":
                                             System.out.println("\n---------------------------LIST OF MEDICINES------------------------------\n");
                                             System.out.println("\n************************** MEDICINE FOR COUGH *****************************\n");
                                             showMed(this.tambal, "Cough");
@@ -176,57 +259,26 @@ public class Pharmacist extends RegisteredUsers {
                                             System.out.println("\n*********************** MEDICINE FOR HEADACHE *****************************\n");
                                             showMed(this.tambal, "Headache");
                                             break;
-                                        case "2":
-                                            customer.order(this.Medquantity);
-                                            break;
-                                        case "3":
-                                            customer.viewOrder();
-                                        case "4":
-                                            choose = "4";
-                                            if (acc.getAge() >= 60) {
-                                                printdiscount();
-                                            } else {
-                                                printReceipt();
-                                            }
-                                            break;
-                                        default:
-                                            System.out.println("Invalid");
-                                            break;
-                                    }
-                                }
-                            } else if (acc.getRole().equalsIgnoreCase("Admin")) {
-                                String Adminchoose = "0";
-                                while (Adminchoose != "4") {
-                                    Adminchoose = input("\nWhat do you want to do?\nPress 1 View Inventory\nPress 2 Add Medicine\nPress 3 Delete Medicine\nPress 4 Exit\nChoice");
-                                    switch (Adminchoose) {
-                                        case "1":
-                                            ViewInventory();
-                                            break;
-                                        case "2":
-                                            System.out.println("\n-------------------------------------ADD MEDICINE-------------------------------------------------\n");
-                                            break;
-                                        case "3":
-                                            System.out.println("\n-------------------------------------DELETE MEDICINE-------------------------------------------------\n");
-                                            break;
-                                        case "4":
-                                            Adminchoose = "4";
+                                        case "5":
+                                            Adminchoose = "5";
                                             System.out.println("\n----------------------------THANK YOU-----------------------------\n");
                                             break;
                                         default:
                                             System.out.println("Invalid");
-                                            break;
                                     }
                                 }
                             }
                         }
                     }
+                    break;
                 case "3":
+                    identity = false;
                     System.out.println("Thank You!!!");
                     break;
                 default:
                     System.out.println("Invalid input");
-                    break;
             }
         }
     }
+
 }

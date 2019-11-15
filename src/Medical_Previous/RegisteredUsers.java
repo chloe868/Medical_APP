@@ -15,8 +15,8 @@ import java.util.Scanner;
  */
 public abstract class RegisteredUsers extends Account implements method {
 
-    public static Scanner user = new Scanner(System.in);
-    private static List<Account> registered = new ArrayList<Account>();
+    Scanner user = new Scanner(System.in);
+    private List<Account> registered = new ArrayList<Account>();
 
     public RegisteredUsers() {
     }
@@ -25,12 +25,20 @@ public abstract class RegisteredUsers extends Account implements method {
         super(role, Firstname, Lastname, Age, Username, Password);
     }
 
-    public static List<Account> getRegistered() {
+    public Scanner getUser() {
+        return user;
+    }
+
+    public void setUser(Scanner user) {
+        this.user = user;
+    }
+
+    public List<Account> getRegistered() {
         return registered;
     }
 
-    public static void setRegistered(List<Account> registered) {
-        RegisteredUsers.registered = registered;
+    public void setRegistered(List<Account> registered) {
+        this.registered = registered;
     }
 
     public void showMed(ArrayList<Medicine> a,String illness) {
